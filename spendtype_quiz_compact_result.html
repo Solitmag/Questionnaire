@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpendType Quiz</title>
+  <style>
+    :root{
+      --bg:#f7f6f2;
+      --card:#ffffff;
+      --text:#1f2a1f;
+      --muted:#667066;
+      --line:#dfe5dd;
+      --soft:#eef2ec;
+      --accent:#2f6b42;
+      --accent-2:#183321;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg, #f5f5f2 0%, #fbfbf9 50%, #f2f3ef 100%);
+      color:var(--text);
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 56px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:20px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:28px;
+      box-shadow:0 8px 30px rgba(0,0,0,.04);
+    }
+    .p-hero{padding:30px}
+    .badge{
+      display:inline-block;
+      padding:7px 12px;
+      border-radius:999px;
+      font-size:13px;
+      background:var(--soft);
+      border:1px solid var(--line);
+      margin-right:8px;
+      margin-bottom:8px;
+    }
+    h1{
+      font-size:52px;
+      line-height:1.02;
+      margin:10px 0 16px;
+      letter-spacing:-.03em;
+    }
+    h2{margin:0 0 10px;font-size:24px}
+    p{line-height:1.75}
+    .muted{color:var(--muted)}
+    .chips span{
+      display:inline-block;
+      background:var(--soft);
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:14px;
+      margin:6px 8px 0 0;
+    }
+    .btn{
+      appearance:none;
+      border:none;
+      border-radius:18px;
+      padding:14px 20px;
+      cursor:pointer;
+      font-size:15px;
+      font-weight:600;
+      transition:.18s ease;
+    }
+    .btn-primary{background:var(--accent-2); color:#fff;}
+    .btn-outline{background:#fff; color:var(--text); border:1px solid var(--line);}
+    .quiz-card{margin-top:22px; overflow:hidden}
+    .top{padding:24px 28px; border-bottom:1px solid #edf0eb;}
+    .row{display:flex; align-items:center; justify-content:space-between; gap:14px;}
+    .progress{width:100%; height:10px; border-radius:999px; background:#edf1ec; overflow:hidden; margin-top:14px;}
+    .bar{height:100%; width:0%; background:var(--accent-2); transition:width .22s ease;}
+    .qbody{padding:28px}
+    .qtext{font-size:30px; line-height:1.45; margin:0 0 24px; max-width:860px;}
+    .options{display:grid; gap:12px}
+    .opt{
+      width:100%;
+      text-align:left;
+      padding:16px 18px;
+      border-radius:20px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-size:15px;
+      transition:.18s ease;
+    }
+    .opt:hover{border-color:#99a79a}
+    .opt.selected{background:var(--accent-2); color:#fff; border-color:var(--accent-2);}
+    .nav{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:24px;}
+    .hidden{display:none}
+    .result-title{
+      font-size:52px;
+      line-height:1;
+      margin:8px 0;
+      letter-spacing:-.03em;
+    }
+    .subtitle{font-size:22px; color:#556155; margin-top:4px;}
+    .hero-animal{
+      width: 100%;
+      max-width: 220px;
+      display:block;
+      margin: 6px auto 0;
+      object-fit:contain;
+    }
+    .result-grid{
+      display:grid;
+      grid-template-columns:1.35fr .85fr;
+      gap:20px;
+      align-items:start;
+    }
+    .result-main{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 240px;
+      gap:18px;
+      align-items:start;
+    }
+    .result-copy{
+      min-width:0;
+    }
+    .result-copy p{
+      margin-bottom:0;
+    }
+    .animal-wrap{
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding-top:8px;
+    }
+    .mini{
+      min-height:unset;
+      height:auto;
+    }
+    @media (max-width: 860px){
+      .result-grid{grid-template-columns:1fr}
+      .result-main{grid-template-columns:1fr}
+      .hero-animal{max-width:220px; margin:12px auto 0;}
+    }
+    .result-grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:20px;
+    }
+    .mini{
+      background:#f7f8f5;
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:18px;
+    }
+    .pill{
+      display:inline-block;
+      padding:8px 12px;
+      border-radius:999px;
+      background:var(--soft);
+      margin:0 8px 8px 0;
+      font-size:14px;
+    }
+    .score{margin-bottom:18px}
+    .score-head{
+      display:flex;
+      justify-content:space-between;
+      font-size:14px;
+      margin-bottom:8px;
+    }
+    .score-track{
+      height:12px;
+      background:#edf1ec;
+      border-radius:999px;
+      overflow:hidden;
+    }
+    .score-fill{
+      height:100%;
+      background:var(--accent-2);
+    }
+    @media (max-width: 860px){
+      .grid,.result-grid{grid-template-columns:1fr}
+      h1{font-size:38px}
+      .qtext{font-size:23px}
+      .result-title{font-size:42px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="homeView">
+      <div class="grid">
+        <div class="card p-hero">
+          <div>
+            <span class="badge">SpendType</span>
+            <span class="badge">AI × Behavioural Finance</span>
+          </div>
+          <h1>Financial personality, but make it fun.</h1>
+          <p class="muted">A short interactive quiz that maps your money habits into a playful behavioural profile based on decision style, planning, risk appetite, and money security.</p>
+          <div class="chips">
+            <span>12 questions</span>
+            <span>~2–3 minutes</span>
+            <span>8 main personality types</span>
+            <span>1 security tag</span>
+          </div>
+          <div style="margin-top:26px">
+            <button class="btn btn-primary" onclick="startQuiz()">Start quiz</button>
+          </div>
+        </div>
+        <div class="card p-hero">
+          <h2>How it works</h2>
+          <p class="muted"><strong style="color:#1f2a1f">1. Answer 12 prompts</strong><br>We capture emotional vs rational style, planning habits, risk appetite, and money-security sensitivity.</p>
+          <p class="muted"><strong style="color:#1f2a1f">2. Build a behavioural profile</strong><br>Your answers are scored across four dimensions rather than a single simplistic label.</p>
+          <p class="muted"><strong style="color:#1f2a1f">3. Reveal your type</strong><br>You get one playful main type and one supporting money-security tag.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="quizView" class="card quiz-card hidden">
+      <div class="top">
+        <div class="row">
+          <div>
+            <div id="qCounter" class="muted">Question 1 of 12</div>
+            <div id="qCategory" style="font-size:14px; font-weight:600; margin-top:5px;">Decision Style</div>
+          </div>
+          <div id="progressText" class="muted">0% complete</div>
+        </div>
+        <div class="progress"><div id="progressBar" class="bar"></div></div>
+      </div>
+      <div class="qbody">
+        <div id="qText" class="qtext"></div>
+        <div id="options" class="options"></div>
+        <div class="nav">
+          <button id="backBtn" class="btn btn-outline" onclick="goBack()">Back</button>
+          <button id="nextBtn" class="btn btn-primary" onclick="goNext()" disabled>Next</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="resultView" class="hidden">
+      <div class="card p-hero">
+        <div>
+          <span class="badge">Your SpendType</span>
+          <span id="resultCode" class="badge"></span>
+          <span id="securityCode" class="badge"></span>
+        </div>
+        <div class="result-grid">
+          <div class="result-main">
+            <div class="result-copy">
+              <div class="muted" style="margin-top:8px">你的结果人格是</div>
+              <div id="resultName" class="result-title"></div>
+              <div id="resultSubtitle" class="subtitle"></div>
+              <p id="resultSummary" style="font-size:18px; color:#4f5b4f; max-width:620px;"></p>
+            </div>
+            <div class="animal-wrap">
+              <img id="resultAnimal" class="hero-animal" src="" alt="SpendType animal character">
+            </div>
+          </div>
+          <div class="mini" style="padding:20px;">
+            <div class="muted">Supporting tag</div>
+            <div id="securityName" style="font-size:28px; font-weight:700; margin-top:8px;"></div>
+            <div id="securityTitle" class="muted" style="margin-top:4px"></div>
+            <p id="securityText" style="font-size:15px; color:#4f5b4f;"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-grid" style="margin-top:20px">
+        <div class="card p-hero">
+          <h2>Your behavioural scores</h2>
+          <div id="scoreBox"></div>
+        </div>
+        <div class="card p-hero">
+          <h2>Strengths & watch-outs</h2>
+          <div style="margin-top:18px">
+            <div style="font-weight:700; margin-bottom:10px">Strengths</div>
+            <div id="strengths"></div>
+          </div>
+          <div style="margin-top:22px">
+            <div style="font-weight:700; margin-bottom:10px">Blindspots</div>
+            <div id="blindspots"></div>
+          </div>
+          <div style="margin-top:22px">
+            <div style="font-weight:700; margin-bottom:10px">Suggested nudges</div>
+            <div id="tips"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px">
+        <button class="btn btn-primary" onclick="restartQuiz()">Take again</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      { id: 1, category: "Decision Style", text: "Before making a relatively large spending or investment decision, I usually compare several options instead of acting immediately.", dimension: "rational", reverse: false },
+      { id: 2, category: "Decision Style", text: "When I feel stressed or emotionally drained, I am more likely to spend money to feel better.", dimension: "rational", reverse: true },
+      { id: 3, category: "Decision Style", text: "Even when I really want something, I can usually wait until the next day before deciding.", dimension: "rational", reverse: false },
+      { id: 4, category: "Planning & Control", text: "I usually know roughly how much money I currently have available to spend.", dimension: "planning", reverse: false },
+      { id: 5, category: "Planning & Control", text: "I tend to set a budget, a savings goal, or at least some spending boundary for myself.", dimension: "planning", reverse: false },
+      { id: 6, category: "Planning & Control", text: "I often realize only after buying that I did not really need those things.", dimension: "planning", reverse: true },
+      { id: 7, category: "Risk & Curiosity", text: "If the long-term return is better, I can accept short-term fluctuations.", dimension: "risk", reverse: false },
+      { id: 8, category: "Risk & Curiosity", text: "New investment ideas, financial tools, or money apps usually interest me.", dimension: "risk", reverse: false },
+      { id: 9, category: "Risk & Curiosity", text: "Compared with uncertain but higher returns, I generally prefer lower but stable returns.", dimension: "risk", reverse: true },
+      { id: 10, category: "Money Security", text: "Money-related uncertainty can noticeably affect my mood.", dimension: "security", reverse: false },
+      { id: 11, category: "Money Security", text: "I feel especially relieved when I know my account balance and cash situation are under control.", dimension: "security", reverse: false },
+      { id: 12, category: "Money Security", text: "Without savings or an emergency buffer, I would feel quite uneasy.", dimension: "security", reverse: false }
+    ];
+
+    const choices = [
+      { value: 1, label: "Strongly disagree" },
+      { value: 2, label: "Disagree" },
+      { value: 3, label: "Neutral" },
+      { value: 4, label: "Agree" },
+      { value: 5, label: "Strongly agree" }
+    ];
+
+    const animalImages = {
+      CTRL: "1.png",
+      ALFA: "2.png",
+      HOLD: "3.png",
+      SWNG: "4.png",
+      SAFE: "5.png",
+      BLAZE: "6.png",
+      YOLO: "7.png",
+      OOPS: "8.png"
+    };
+
+    const profiles = {
+      "H-H-L": { code: "CTRL", name: "抠门鹅", title: "The Budget Boss", summary: "You are disciplined, deliberate, and hard to emotionally derail. You care about safety and structure, and you prefer decisions that feel measured rather than flashy.", strengths: ["Strong self-control", "Clear boundaries", "Steady financial habits"], blindspots: ["Can be overly cautious", "May miss upside opportunities"], tips: ["Use long-term goals, not just short-term safety", "Try rules-based investing to reduce over-conservatism"] },
+      "H-H-H": { code: "ALFA", name: "心机狐", title: "The Strategic Hunter", summary: "You are calculated, curious, and opportunity-aware. You do not chase risk blindly—you prefer risk that has been thought through.", strengths: ["Strategic mindset", "High initiative", "Balances analysis with action"], blindspots: ["Can become overconfident", "May overestimate judgment quality"], tips: ["Track decisions over time", "Set position-size limits before acting"] },
+      "H-L-L": { code: "HOLD", name: "佛系豚", title: "The Chill Keeper", summary: "You are mentally clear and not easily swept up by hype, but you may not love detailed money planning. You prefer simple, low-drama choices.", strengths: ["Low impulsiveness", "Calm decision style", "Good at avoiding noise"], blindspots: ["Can delay action", "May settle for good enough too often"], tips: ["Automate savings", "Use simple dashboards to keep momentum"] },
+      "H-L-H": { code: "SWNG", name: "嗅金犬", title: "The Smart Opportunist", summary: "You like possibilities and can move fast when something feels promising. You are flexible and alert, but may need more structure to stay consistent.", strengths: ["Adaptive", "Opportunity-sensitive", "Comfortable with change"], blindspots: ["Can become inconsistent", "May swing too often"], tips: ["Create decision checklists", "Build a cool-down rule before big moves"] },
+      "L-H-L": { code: "SAFE", name: "存存鼠", title: "The Cushion Keeper", summary: "You care deeply about feeling financially protected. You plan ahead and value stability, but fear of uncertainty can quietly shape more decisions than you realize.", strengths: ["Protective mindset", "Good buffer awareness", "Solid budgeting instinct"], blindspots: ["Can over-prioritize safety", "May hesitate to start investing"], tips: ["Separate emergency money from growth money", "Use gradual exposure to higher-risk assets"] },
+      "L-H-H": { code: "BLAZE", name: "冲锋鸡", title: "The Conviction Player", summary: "You can be organized and ambitious, but when you believe in something, emotion and conviction can carry real weight in your decisions.", strengths: ["High energy", "Prepared to commit", "Strong action bias"], blindspots: ["May confuse conviction with accuracy", "Can take oversized bets"], tips: ["Stress-test your assumptions", "Use pre-set exposure caps"] },
+      "L-L-H": { code: "YOLO", name: "梭哈猴", title: "The Adrenaline Chaser", summary: "You are driven by possibility, speed, and excitement. You are willing to move before everyone else—but you can also act before you have fully thought things through.", strengths: ["Bold", "Fast-moving", "Open to experimentation"], blindspots: ["FOMO risk", "Impulsive entries", "Higher regret potential"], tips: ["Add a 24-hour pause for large decisions", "Use loss previews before committing"] },
+      "L-L-L": { code: "OOPS", name: "买它鸭", title: "The Mood Buyer", summary: "You are not necessarily a risk lover, but emotions, context, and momentary desire can have a strong influence on your money choices.", strengths: ["Emotionally expressive", "Values lived experience", "Responsive to joy"], blindspots: ["Impulse spending", "Budget drift", "Post-purchase regret"], tips: ["Tag emotional purchases", "Try delayed checkout and weekly reflection"] }
+    };
+
+    let current = 0;
+    let answers = {};
+
+    function scoreDimension(answer, reverse) {
+      return reverse ? 6 - answer : answer;
+    }
+    function getBand(score) {
+      return score >= 11 ? "H" : "L";
+    }
+    function getSecurityTag(score) {
+      if (score >= 12) return { code: "BUFF", name: "安全感超载", title: "High Security Mode", text: "Financial uncertainty affects you strongly. A clear buffer and visible control points will help you feel grounded." };
+      if (score >= 8) return { code: "BALN", name: "稳健预警", title: "Balanced Alert", text: "You are usually steady, but uncertainty can still make you more protective than usual." };
+      return { code: "CHIL", name: "松弛模式", title: "Chill Mode", text: "You do not get stressed by money easily, which can be freeing—but it may also reduce your sense of urgency." };
+    }
+
+    function startQuiz() {
+      document.getElementById('homeView').classList.add('hidden');
+      document.getElementById('quizView').classList.remove('hidden');
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = questions[current];
+      const answeredCount = Object.keys(answers).length;
+      const progress = Math.round(answeredCount / questions.length * 100);
+
+      document.getElementById('qCounter').textContent = `Question ${current + 1} of ${questions.length}`;
+      document.getElementById('qCategory').textContent = q.category;
+      document.getElementById('progressText').textContent = `${progress}% complete`;
+      document.getElementById('progressBar').style.width = `${progress}%`;
+      document.getElementById('qText').textContent = q.text;
+
+      const options = document.getElementById('options');
+      options.innerHTML = "";
+      choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'opt' + (answers[q.id] === choice.value ? ' selected' : '');
+        btn.textContent = choice.label;
+        btn.onclick = () => {
+          answers[q.id] = choice.value;
+          renderQuestion();
+        };
+        options.appendChild(btn);
+      });
+
+      document.getElementById('backBtn').disabled = current === 0;
+      document.getElementById('nextBtn').disabled = !answers[q.id];
+      document.getElementById('nextBtn').textContent = current === questions.length - 1 ? 'See result' : 'Next';
+    }
+
+    function goBack() {
+      if (current > 0) {
+        current -= 1;
+        renderQuestion();
+      }
+    }
+
+    function computeResult() {
+      const totals = { rational: 0, planning: 0, risk: 0, security: 0 };
+      questions.forEach(q => {
+        const raw = answers[q.id];
+        totals[q.dimension] += scoreDimension(raw, q.reverse);
+      });
+      const key = `${getBand(totals.rational)}-${getBand(totals.planning)}-${getBand(totals.risk)}`;
+      return { totals, profile: profiles[key], security: getSecurityTag(totals.security) };
+    }
+
+    function goNext() {
+      if (current < questions.length - 1) {
+        current += 1;
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function addPills(containerId, items) {
+      const box = document.getElementById(containerId);
+      box.innerHTML = "";
+      items.forEach(item => {
+        const span = document.createElement('span');
+        span.className = 'pill';
+        span.textContent = item;
+        box.appendChild(span);
+      });
+    }
+
+    function showResult() {
+      const { totals, profile, security } = computeResult();
+      document.getElementById('quizView').classList.add('hidden');
+      document.getElementById('resultView').classList.remove('hidden');
+
+      document.getElementById('resultCode').textContent = profile.code;
+      document.getElementById('securityCode').textContent = security.code;
+      document.getElementById('resultName').textContent = profile.name;
+      document.getElementById('resultSubtitle').textContent = `${profile.code} · ${profile.title}`;
+      document.getElementById('resultSummary').textContent = profile.summary;
+      document.getElementById('resultAnimal').src = animalImages[profile.code] || "";
+      document.getElementById('resultAnimal').alt = profile.name + " animal character";
+
+      document.getElementById('securityName').textContent = security.name;
+      document.getElementById('securityTitle').textContent = security.title;
+      document.getElementById('securityText').textContent = security.text;
+
+      const scoreBox = document.getElementById('scoreBox');
+      scoreBox.innerHTML = "";
+      [["Rational", totals.rational], ["Planning", totals.planning], ["Risk", totals.risk], ["Security", totals.security]].forEach(([label, score]) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'score';
+        wrap.innerHTML = `
+          <div class="score-head"><span>${label}</span><span>${score}/15</span></div>
+          <div class="score-track"><div class="score-fill" style="width:${Math.round(score/15*100)}%"></div></div>
+        `;
+        scoreBox.appendChild(wrap);
+      });
+
+      addPills('strengths', profile.strengths);
+      addPills('blindspots', profile.blindspots);
+      addPills('tips', profile.tips);
+    }
+
+    function restartQuiz() {
+      current = 0;
+      answers = {};
+      document.getElementById('resultView').classList.add('hidden');
+      document.getElementById('homeView').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
