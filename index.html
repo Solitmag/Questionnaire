@@ -293,8 +293,9 @@
         </div>
       </div>
 
-      <div style="margin-top:20px">
-        <button class="btn btn-primary" onclick="restartQuiz()">Take again</button>
+      <div style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="goToDemo()">Continue to personalized demo</button>
+        <button class="btn btn-outline" onclick="restartQuiz()">Take again</button>
       </div>
     </div>
   </div>
@@ -442,6 +443,7 @@
       document.getElementById('resultName').textContent = profile.name;
       document.getElementById('resultSubtitle').textContent = `${profile.code} · ${profile.title}`;
       document.getElementById('resultSummary').textContent = profile.summary;
+      localStorage.setItem("spendType", profile.code);
       document.getElementById('resultAnimal').src = animalImages[profile.code] || "";
       document.getElementById('resultAnimal').alt = profile.name + " animal character";
 
@@ -464,6 +466,11 @@
       addPills('strengths', profile.strengths);
       addPills('blindspots', profile.blindspots);
       addPills('tips', profile.tips);
+    }
+
+
+    function goToDemo() {
+      window.location.href = "demo.html";
     }
 
     function restartQuiz() {

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpendType Three-Scenario Banking Demo</title>
+  <style>
+    :root {
+      --bg: #f5f8fb;
+      --surface: #ffffff;
+      --surface-soft: #eef5fb;
+      --text: #102033;
+      --muted: #607084;
+      --line: #dce5ee;
+      --primary: #1769e0;
+      --primary-soft: #e4efff;
+      --accent: #16a085;
+      --accent-soft: #e6f7f2;
+      --warning: #d58425;
+      --warning-soft: #fff4df;
+      --danger: #c7475d;
+      --danger-soft: #ffe8ed;
+      --ok: #168a5a;
+      --shadow: 0 22px 60px rgba(18, 39, 67, 0.12);
+      --radius-lg: 22px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(79, 151, 255, 0.18), transparent 34%),
+        radial-gradient(circle at top right, rgba(22, 160, 133, 0.15), transparent 30%),
+        linear-gradient(180deg, #f7fbff 0%, #f4f6f2 100%);
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .page {
+      width: min(1180px, calc(100vw - 28px));
+      margin: 0 auto;
+      padding: 22px 0 52px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 12px 28px rgba(23, 105, 224, 0.25);
+    }
+
+    .top-pill {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .hero, .module {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      border-radius: 28px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.78)),
+        linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 18px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -120px;
+      top: -140px;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--accent) 20%, transparent);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      padding: clamp(24px, 5vw, 46px);
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .eyebrow, .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 750;
+      font-size: 0.88rem;
+    }
+
+    h1 {
+      margin: 16px 0 10px;
+      font-size: clamp(2.2rem, 6vw, 4.8rem);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .hero-title span {
+      color: var(--accent);
+      display: block;
+      font-size: clamp(1.4rem, 3vw, 2.1rem);
+      margin-top: 8px;
+    }
+
+    .lead {
+      color: #405267;
+      font-size: clamp(1rem, 2.4vw, 1.16rem);
+      line-height: 1.6;
+      margin: 0;
+      max-width: 680px;
+    }
+
+    .hero-panel {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      border-radius: 22px;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .loop-step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .loop-step strong {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .loop-step span { display: block; font-weight: 750; }
+    .loop-step small { color: var(--muted); line-height: 1.45; }
+
+    .switcher {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(31, 52, 78, 0.07);
+    }
+
+    .switcher button, .chip, .secondary, .ghost, .small-cta {
+      border: 1px solid var(--line);
+      color: #344861;
+      background: #ffffff;
+      border-radius: 999px;
+      padding: 9px 12px;
+      min-height: 38px;
+      font-weight: 750;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .switcher button:hover, .chip:hover, .secondary:hover, .ghost:hover, .small-cta:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+    }
+
+    .switcher button.active, .chip.active {
+      color: #ffffff;
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .module {
+      border-radius: 26px;
+      padding: clamp(18px, 3vw, 28px);
+      margin-bottom: 22px;
+    }
+
+    .module-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .kicker {
+      color: var(--primary);
+      font-weight: 850;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 8px;
+    }
+
+    h2 { margin: 0 0 8px; font-size: clamp(1.45rem, 3vw, 2rem); }
+    h3 { margin: 0 0 8px; font-size: 1rem; }
+    p { overflow-wrap: anywhere; }
+    .module-head p, .section-copy { margin: 0; color: var(--muted); line-height: 1.55; }
+
+    .tag {
+      color: var(--accent);
+      background: var(--accent-soft);
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+
+    .two-col { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 0.82fr); gap: 18px; align-items: start; }
+    .cards, .settings-grid, .metric-grid, .automation-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .goal-layout { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+
+    .card, .panel, .metric, .story-block, .setting, .quote-box, .rule-box {
+      border: 1px solid var(--line);
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+
+    .panel, .card { box-shadow: 0 8px 24px rgba(31, 52, 78, 0.045); }
+    .card { min-height: 176px; display: grid; gap: 9px; align-content: start; }
+    .card p, .metric p, .story-block p, .setting p { color: var(--muted); line-height: 1.5; margin: 0; }
+    .mini-list { display: grid; gap: 8px; color: #405267; font-size: 0.9rem; }
+
+    .small-cta { justify-self: start; color: var(--accent); background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 25%, var(--line)); }
+    .primary {
+      border: 0;
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 12px 28px rgba(23, 105, 224, 0.2);
+      border-radius: 999px;
+      min-height: 42px;
+      padding: 9px 15px;
+      font-weight: 850;
+    }
+
+    .secondary { min-height: 42px; }
+    .cta-row, .chip-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+    .setting { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+    .toggle { width: 48px; min-width: 48px; height: 28px; border-radius: 999px; border: 0; background: #c9d5df; padding: 3px; transition: background 0.2s ease; }
+    .toggle::before { content: ""; display: block; width: 22px; height: 22px; border-radius: 50%; background: #ffffff; transition: transform 0.2s ease; box-shadow: 0 2px 7px rgba(0,0,0,.18); }
+    .toggle.on { background: var(--accent); }
+    .toggle.on::before { transform: translateX(20px); }
+
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    label { display: grid; gap: 7px; color: #475b72; font-size: 0.88rem; font-weight: 750; }
+    input, select { width: 100%; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 11px 12px; color: var(--text); background: #ffffff; min-height: 44px; }
+    input::placeholder { color: #a9b5c3; }
+    input:focus, select:focus { outline: 3px solid color-mix(in srgb, var(--accent) 22%, transparent); border-color: var(--accent); }
+    .full { grid-column: 1 / -1; }
+
+    .scenario-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 14px 0; }
+    .scenario-grid button { border: 1px solid var(--line); border-radius: var(--radius-sm); background: #ffffff; color: #344861; padding: 11px; text-align: left; min-height: 56px; font-weight: 750; }
+    .scenario-grid button:hover { border-color: var(--accent); color: var(--accent); }
+
+    .result-pill { display: inline-flex; align-items: center; border-radius: 999px; padding: 10px 14px; font-weight: 850; background: var(--accent-soft); color: var(--accent); }
+    .result-pill.warn { background: var(--warning-soft); color: var(--warning); }
+    .result-pill.danger { background: var(--danger-soft); color: var(--danger); }
+
+    .metric .label { color: var(--muted); font-size: 0.78rem; font-weight: 850; text-transform: uppercase; letter-spacing: 0.08em; }
+    .metric .value { font-size: clamp(1.22rem, 3vw, 1.85rem); font-weight: 850; margin: 6px 0 2px; color: var(--accent); }
+    .metric .value.placeholder { color: #b8c3cf; }
+
+    .story { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+    .story-block strong { color: var(--accent); }
+
+    .quote-box { background: linear-gradient(135deg, var(--accent-soft), #ffffff); color: #2f5360; line-height: 1.55; margin-bottom: 14px; }
+    .rule-box { background: #f8fbfc; display: grid; gap: 9px; }
+    .rule-row { display: flex; justify-content: space-between; gap: 12px; color: #405267; font-size: 0.92rem; }
+    .saving-number { font-weight: 850; color: var(--accent); font-size: clamp(1.28rem, 3vw, 1.8rem); margin: 6px 0; }
+    .progress-bar { height: 14px; background: #e7eff3; border-radius: 999px; overflow: hidden; margin: 14px 0 8px; }
+    .progress-fill { height: 100%; width: 0%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.2s ease; }
+    .badge-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .badge { border: 1px solid var(--line); color: var(--muted); background: #f6f9fb; border-radius: 999px; padding: 8px 10px; font-size: 0.82rem; font-weight: 750; }
+    .badge.unlocked { color: #ffffff; border-color: var(--accent); background: var(--accent); }
+    .save-state, .inline-note { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+    .custom-goal { display: none; }
+    .custom-goal.visible { display: block; }
+    .highlight { animation: flash 0.85s ease; }
+    @keyframes flash { 0%{ box-shadow:0 0 0 0 rgba(22,160,133,.45);} 100%{ box-shadow:0 0 0 18px rgba(22,160,133,0);} }
+
+    .footer-note { color: var(--muted); text-align: center; margin: 24px 0 0; line-height: 1.5; font-size: 0.92rem; }
+
+    @media (max-width: 920px) {
+      .topbar, .module-head { align-items: stretch; flex-direction: column; }
+      .top-pill { white-space: normal; }
+      .hero-inner, .two-col, .goal-layout { grid-template-columns: 1fr; }
+      .cards, .settings-grid, .metric-grid, .automation-grid, .story { grid-template-columns: 1fr; }
+      .form-grid, .scenario-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .page { width: min(100vw - 18px, 1180px); padding-top: 14px; }
+      .module { border-radius: 18px; padding: 15px; }
+      .hero { border-radius: 20px; }
+      .hero-inner { padding: 20px; }
+      .switcher button, .primary, .secondary, .ghost { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <nav class="topbar" aria-label="Demo navigation">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">ST</div>
+        <div>
+          <div>SpendType</div>
+          <small>Integrated consumer banking demo</small>
+        </div>
+      </div>
+      <div class="top-pill">Questionnaire result → banking setup → spending reflection → savings goal</div>
+    </nav>
+
+    <section class="hero" aria-labelledby="profileTitle">
+      <div class="hero-inner">
+        <div>
+          <div class="eyebrow">AI insight based on your questionnaire result</div>
+          <h1 class="hero-title" id="profileTitle">OOPS <span>The Impulse Buyer</span></h1>
+          <p class="lead" id="profileInsight">Your personalized banking page is loading.</p>
+        </div>
+        <div class="hero-panel" aria-label="Closed loop overview">
+          <div class="loop-step"><strong>1</strong><div><span>Personalized banking setup</span><small>Recommended tools and settings fit the selected SpendType.</small></div></div>
+          <div class="loop-step"><strong>2</strong><div><span>Pre-spending reflection</span><small>Purchase, payment method, budget, and installment pressure are checked before paying.</small></div></div>
+          <div class="loop-step"><strong>3</strong><div><span>Simple savings goal</span><small>The same profile shapes SMART goals, 333 Rule checks, and saving automation.</small></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="switcher" id="typeSwitcher" aria-label="Demo SpendType switcher"></section>
+
+    <section class="module" id="bankingModule" aria-labelledby="bankingTitle">
+      <div class="module-head">
+        <div>
+          <div class="kicker">Scenario 1</div>
+          <h2 id="bankingTitle">Personalized Banking Setup</h2>
+          <p id="profileSummary">SpendType is preparing your personalized setup.</p>
+        </div>
+        <span class="tag" id="profileTag">Personalized</span>
+      </div>
+      <div class="two-col">
+        <div class="cards" id="featureGrid"></div>
+        <aside class="panel">
+          <h3>Personalized protection settings</h3>
+          <p class="section-copy">Turn on the safeguards that match your SpendType. This demo saves settings locally in this browser.</p>
+          <div class="settings-grid" id="settingsGrid" style="margin-top: 14px;"></div>
+          <div class="cta-row" style="margin-top: 14px;">
+            <button class="primary" id="saveSettings" type="button">Save my personalized settings</button>
+            <button class="secondary" id="viewReport" type="button">View my SpendType report</button>
+            <span class="save-state" id="saveState" role="status" aria-live="polite"></span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="module" id="reflectionModule" aria-labelledby="reflectionTitle">
+      <div class="module-head">
+        <div>
+          <div class="kicker">Scenario 2</div>
+          <h2 id="reflectionTitle">Pre-Spending Reflection</h2>
+          <p>This replaces the old regret-score simulator to avoid overlap. It uses a fixed matrix: budget impact + future pressure + SpendType.</p>
+        </div>
+        <span class="result-pill warn" id="verdictPill">Ready to reflect</span>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <h3>What are you thinking of buying?</h3>
+          <p class="section-copy">Choose a preset or edit the details. Currency is unified to HKD across the demo.</p>
+          <div class="scenario-grid" id="scenarioGrid"></div>
+          <div class="form-grid">
+            <label class="full">Item name<input id="itemName" type="text" placeholder="Camera, phone, concert ticket..." /></label>
+            <label>Item price (HKD)<input id="itemPrice" type="number" min="0" step="50" placeholder="6800" /></label>
+            <label>Payment method<select id="paymentMethod"><option value="full">Pay in full</option><option value="bnpl3">BNPL 3 months</option><option value="bnpl6">BNPL 6 months</option></select></label>
+            <label>Monthly flexible budget (HKD)<input id="monthlyBudget" type="number" min="1" step="100" placeholder="20000" /></label>
+            <label>Existing monthly installments (HKD)<input id="existingInstallments" type="number" min="0" step="50" placeholder="0" /></label>
+          </div>
+          <div class="cta-row" style="margin-top: 14px;"><button class="primary" id="runReflection" type="button">Run reflection</button><button class="secondary" id="resetReflection" type="button">Reset</button></div>
+        </div>
+        <div>
+          <div class="metric-grid">
+            <div class="metric"><div class="label">Budget impact</div><div class="value placeholder" id="impactValue">—</div><p id="impactSub">How much of this month it takes up.</p></div>
+            <div class="metric"><div class="label">This month</div><div class="value placeholder" id="monthValue">—</div><p id="monthSub">How this month is likely to feel.</p></div>
+            <div class="metric"><div class="label">Future pressure</div><div class="value placeholder" id="futureValue">—</div><p id="futureSub">Future installment pressure.</p></div>
+            <div class="metric"><div class="label">Room left</div><div class="value placeholder" id="leftValue">—</div><p id="leftSub">Flexible budget after this impact.</p></div>
+          </div>
+          <div class="story">
+            <div class="story-block"><h3>Budget impact</h3><p id="impactHook">Run the reflection to see the purchase impact.</p></div>
+            <div class="story-block"><h3>SpendType check</h3><p><strong id="personaTag">OOPS | The Impulse Buyer</strong></p><p id="personalityExplain">Different personalities need different reminders before spending.</p></div>
+            <div class="story-block"><h3>Future pressure</h3><p id="futureExplain">Installments can look harmless now and annoying later.</p></div>
+            <div class="story-block"><h3>Suggested action</h3><p id="actionExplain">Run the reflection to get a practical next step.</p><div class="chip-row" id="altChips" style="margin-top: 10px;"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="savingsModule" aria-labelledby="savingsTitle">
+      <div class="module-head">
+        <div>
+          <div class="kicker">Scenario 3</div>
+          <h2 id="savingsTitle">Simple Savings Goal Setup</h2>
+          <p>Turn SpendType insight into a SMART-style savings goal, 333 Rule affordability check, and automation plan.</p>
+        </div>
+        <span class="tag" id="difficultyBadge">Goal preview</span>
+      </div>
+      <div class="goal-layout">
+        <div class="panel">
+          <div class="quote-box" id="savingsQuote">A savings quote will appear here.</div>
+          <h3>SMART goal setup</h3>
+          <div style="display: grid; gap: 14px; margin-top: 12px;">
+            <label>Specific: what are you saving for?
+              <div class="chip-row" id="goalChips">
+                <button class="chip active" type="button" data-goal="Emergency fund">Emergency fund</button>
+                <button class="chip" type="button" data-goal="Travel">Travel</button>
+                <button class="chip" type="button" data-goal="Big purchase">Big purchase</button>
+                <button class="chip" type="button" data-goal="Investment buffer">Investment buffer</button>
+                <button class="chip" type="button" data-goal="Safety net">Safety net</button>
+                <button class="chip" type="button" data-goal="Custom">Custom</button>
+              </div>
+            </label>
+            <label class="custom-goal" id="customGoalWrap">Custom goal<input id="customGoalInput" type="text" placeholder="Name your goal" /></label>
+            <label>Measurable: target amount (HKD)<input id="targetAmount" type="number" placeholder="12000" min="1" step="100" /></label>
+            <div class="chip-row"><button class="chip" type="button" data-target-add="500">+500</button><button class="chip" type="button" data-target-add="1000">+1000</button><button class="chip" type="button" data-target-add="5000">+5000</button><button class="chip" type="button" data-target-add="10000">+10000</button></div>
+            <div class="form-grid"><label>Time-bound: timeframe<select id="timeframeSelect"><option value="1">1 month</option><option value="3">3 months</option><option value="6" selected>6 months</option><option value="12">1 year</option><option value="custom">Custom months</option></select></label><label>Custom months<input id="customMonths" type="number" value="6" min="1" step="1" /></label></div>
+            <div class="rule-box"><strong>333 Rule: achievable and relevant</strong><div class="rule-row"><span>1/3 Savings and investment</span><span id="ruleSavingsPart">—</span></div><div class="rule-row"><span>1/3 Living expenses</span><span>Daily needs</span></div><div class="rule-row"><span>1/3 Reserve and others</span><span>Flexibility</span></div><label>Monthly income (HKD)<input id="monthlyIncome" type="number" placeholder="18000" min="1" step="100" /></label><div class="inline-note" id="affordabilityNote">Enter a target and income to check comfort zone.</div></div>
+          </div>
+        </div>
+        <div style="display: grid; gap: 14px;">
+          <div class="panel"><h3>Savings plan preview</h3><div class="saving-number" id="savingRate">Need to save: —</div><p id="weeklyText" class="section-copy">Weekly amount will appear here.</p><p id="endDateHint" class="inline-note" style="margin-top: 8px;">Target end date will appear here.</p><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div><div class="inline-note" id="progressPercent">0% completed</div></div>
+          <div class="automation-grid"><div class="card"><h3>Pay yourself first</h3><p>Auto-transfer on payday before flexible spending starts.</p></div><div class="card"><h3>Round-up savings</h3><p>Save small amounts automatically from everyday payments.</p></div><div class="card"><h3>Weekly micro-savings</h3><p>Break the target into smaller weekly checkpoints.</p></div><div class="card"><h3>SpendType automation tip</h3><p id="personalityAutoTip">Your personalized tip will appear here.</p></div></div>
+          <div class="panel"><h3>Your savings journey</h3><div class="cta-row" style="margin-bottom: 12px;"><button class="chip quick-save" type="button" data-save-add="50">+50</button><button class="chip quick-save" type="button" data-save-add="100">+100</button><button class="chip quick-save" type="button" data-save-add="500">+500</button><input id="customSaveAmount" type="number" placeholder="Amount" min="0" step="50" style="max-width: 150px;" /><button id="addCustomSave" class="chip" type="button">Add</button></div><div class="badge-list" id="badgeContainer"><span class="badge" data-milestone="0">First save</span><span class="badge" data-milestone="25">25%</span><span class="badge" data-milestone="50">50% halfway</span><span class="badge" data-milestone="75">75%</span><span class="badge" data-milestone="100">100% champion</span></div><div class="cta-row" style="margin-top: 14px;"><button id="setGoalBtn" class="primary" type="button">Set this goal</button><button id="remindBtn" class="secondary" type="button">Remind me later</button><span class="save-state" id="goalState" role="status" aria-live="polite"></span></div></div>
+        </div>
+      </div>
+    </section>
+    <p class="footer-note">This is a frontend-only SpendType demo. It uses simulated rules rather than real banking data, authentication, credit approval, or financial advice.</p>
+  </main>
+
+  <script>
+    const spendTypeConfig = {
+      CTRL:{code:"CTRL", name:"The Careful Controller", insight:"You are good at making money decisions with discipline. Your banking setup gives you clearer limits and fewer surprises before you spend.", summary:"Your recommendations focus on budget precision, spending checks, and goal protection.", tag:"Precision-first", accent:"#1769e0", quote:"You love control. A fixed monthly savings plan works best for you.", autoTip:"Set a fixed recurring transfer on the 1st of each month.", features:[["Budget Lock","Set category limits for dining, shopping, transport, and entertainment.","Alert at 80%, soft lock at 95%.","Set my budget limits","reflection"],["Large Purchase Check","A three-question pause before larger purchases.","Enabled above HKD 2,500.","Turn on purchase checks","reflection"],["Goal-Based Savings","Automatic transfers toward travel, tuition, or emergency goals.","Small weekly auto-transfer.","Create a savings goal","savings"]], settings:[["Budget limit alerts","Warn me at 80% of each category."],["Large purchase check","Ask before purchases above HKD 2,500."],["Goal protection","Show impact on savings goals."]], reflection:{low:"This fits the plan cleanly, but a quick priority check will make it feel even better later.", medium:"This is manageable, but it should be compared with the rest of the month before purchase.", high:"This disrupts the plan enough that your future self may want a stronger pause.", actions:{low:["Check monthly priorities","Buy only if it fits the plan"], medium:["Compare alternatives","Wait until next pay cycle"], high:["Put essentials first","Move it to next month"]}}},
+      ALFA:{code:"ALFA", name:"The Strategic Optimizer", insight:"You like making money work smarter. Your banking setup compares options, optimizes benefits, and reduces hidden costs.", summary:"Your recommendations focus on better timing, better payment choices, and stronger value-for-money.", tag:"Value optimizer", accent:"#7c4dff", quote:"You calculate before acting. Set flexible targets with strategic checkpoints.", autoTip:"Use conditional rules: save more after low-spend weeks or bonus income.", features:[["Smart Comparison Assistant","Show alternatives and better-value options before checkout.","Compare above HKD 800.","Enable smart comparison","reflection"],["Rewards Optimizer","Recommend the best payment method for rewards and fees.","Show best route before checkout.","Optimize my rewards","reflection"],["Strategy Savings Plan","Split money into daily spending and short-term goals.","Automatic monthly allocation.","Build my money strategy","savings"]], settings:[["Price comparison","Compare before higher-value purchases."],["Reward route","Recommend best payment method."],["Fee warning","Flag hidden costs and interest."]], reflection:{low:"This can work if the value route is solid and the payment method is efficient.", medium:"This deserves a value check: price history, alternatives, and total cost matter here.", high:"The financial downside is too large for a simple optimization win.", actions:{low:["Check reward route","Confirm price history"], medium:["Find a better-value option","Delay until target price"], high:["Avoid BNPL","Choose a lower-cost route"]}}},
+      HOLD:{code:"HOLD", name:"The Calm Minimalist", insight:"You prefer money management that does not demand constant attention. Your setup keeps the basics running quietly.", summary:"Your recommendations focus on low-noise automation, essential reminders, and simple status signals.", tag:"Low-noise mode", accent:"#4f8f8b", quote:"Keep it simple. One auto-save rule is all you need.", autoTip:"Use one single auto-rule after payday. Set it once and leave it alone.", features:[["Low-Noise Auto Saving","Move a comfortable amount into savings after payday.","Conservative auto-transfer.","Enable quiet saving","savings"],["Default Budget Mode","Create a simple automatic budget without manual tracking.","Monthly automatic budget.","Use simple budget mode","reflection"],["Important Alerts Only","Send reminders only for bills, unusual spending, or payment risk.","No daily notifications.","Keep alerts simple","settings"]], settings:[["Quiet saving","Save automatically after payday."],["Simple budget","Use a default monthly budget."],["Important alerts only","No noisy daily notifications."]], reflection:{low:"This looks calm enough for your month. Keep it simple and avoid adding extra tasks.", medium:"This is not a crisis, but it may make the month feel more annoying than expected.", high:"This adds too much friction to a money style that works best when life stays simple.", actions:{low:["Keep it within leisure money","Use simple pay-in-full"], medium:["Wait one week","Avoid new installments"], high:["Skip for now","Choose a cheaper option"]}}},
+      SWNG:{code:"SWNG", name:"The Opportunity Seeker", insight:"You are quick to notice opportunities. Your banking setup helps you act with boundaries instead of reacting too fast.", summary:"Your recommendations focus on tracking opportunities, separating real upside from noise, and keeping experiments inside a safe allowance.", tag:"Opportunity-aware", accent:"#d07b21", quote:"You notice opportunities quickly. Add milestone rewards to stay engaged without overshooting.", autoTip:"Auto-save a base amount, then add manual bonus savings after good deals or windfalls.", features:[["Opportunity Watchlist","Save purchases, courses, events, or ideas for observation.","Seven-day watch period.","Create my watchlist","reflection"],["Risk Boundary Alert","Warn when a decision exceeds your monthly opportunity budget.","Alert above 15% of free cash flow.","Set risk boundaries","reflection"],["Experiment Budget","Create a separate allowance for trying new opportunities.","Small monthly allowance.","Set experiment budget","savings"]], settings:[["Opportunity watchlist","Observe ideas for 7 days."],["Risk boundary","Warn above opportunity limit."],["Experiment budget","Separate trial money from core money."]], reflection:{low:"This may be a reasonable opportunity if it stays inside your experiment budget.", medium:"The opportunity is tempting, but the budget signal says it needs a boundary.", high:"This looks more like exposure than opportunity at the current budget impact.", actions:{low:["Use experiment budget","Track the upside"], medium:["Watch it for 7 days","Cap the amount"], high:["Do a smaller test","Protect core funds"]}}},
+      SAFE:{code:"SAFE", name:"The Security Saver", insight:"You value security and peace of mind. Your banking setup protects your safety cushion while keeping spending comfortable.", summary:"Your recommendations focus on emergency reserves, protected wallets, and comfort limits.", tag:"Security-first", accent:"#168a5a", quote:"Start with a small emergency fund. Security first.", autoTip:"Start with a tiny auto-save amount, then increase slowly as comfort grows.", features:[["Safety Cushion Account","Track an essential expense target and progress.","Emergency target starts at 3 months.","Build my safety cushion","savings"],["Auto-Transfer Rule","Move money into emergency savings after payday.","Automatic payday transfer.","Turn on auto-transfer","savings"],["Comfort Spending Limit","Show how much you can spend without harming your cushion.","Visible during reflection.","Show my comfort limit","reflection"]], settings:[["Safety cushion","Track emergency fund months."],["Save-first transfer","Move money after payday."],["Comfort limit","Show safe-to-spend amount."]], reflection:{low:"This looks safe enough, as long as it comes from free-spend money and not your cushion.", medium:"This may still be affordable, but it could reduce your sense of safety this month.", high:"This puts too much pressure on the safety cushion for your comfort style.", actions:{low:["Pay from free-spend wallet","Keep cushion untouched"], medium:["Lower the amount","Wait for next pay cycle"], high:["Protect emergency money","Avoid installment pressure"]}}},
+      BLAZE:{code:"BLAZE", name:"The Fast Mover", insight:"You make decisions quickly and act with energy. Your setup adds a quick pause where speed can become expensive.", summary:"Your recommendations focus on instant alerts, cooling-off moments, and visible weekly budget burn.", tag:"Fast-action guardrails", accent:"#e5533d", quote:"Short sprints work for you. Momentum is your fuel, so set weekly mini-goals.", autoTip:"Use weekly auto-save with small increasing amounts to turn speed into progress.", features:[["Instant Spending Alert","Remind you when spending spikes or looks unusual.","Unusual spending patterns.","Turn on instant alerts","reflection"],["Cooling-Off Prompt","Add a short delay before non-essential large purchases.","10 minutes above HKD 1,500.","Enable cooling-off","reflection"],["Weekly Budget Burn Bar","Show how quickly the weekly budget is being used.","Weekly refresh.","Set weekly budget","savings"]], settings:[["Instant alerts","Warn on spending spikes."],["Cooling-off prompt","Delay larger purchases."],["Budget burn bar","Show weekly spend speed."]], reflection:{low:"This is probably okay, but a fast decision still benefits from one quick breath.", medium:"This is exactly where a short pause helps: not a full stop, just a speed check.", high:"The speed of the decision is hiding a heavy budget hit.", actions:{low:["Take a 10-minute pause","Check weekly burn"], medium:["Wait 24 hours","Move to wishlist"], high:["Stop checkout","Turn it into a savings target"]}}},
+      YOLO:{code:"YOLO", name:"The High-Risk Spender", insight:"You are willing to seize the moment, but high-energy decisions can hide future costs.", summary:"Your recommendations focus on overdraft risk, BNPL reality checks, high-risk limits, and stronger confirmation.", tag:"Risk-aware setup", accent:"#b83b5e", quote:"Use a save-to-spend structure. Reward yourself after hitting the target.", autoTip:"Auto-save a minimum amount, then unlock reward spending after milestone progress.", features:[["Overdraft Risk Warning","Warn when a purchase may push balance or credit into risky territory.","Strong alert before risky payment.","Turn on overdraft protection","reflection"],["BNPL Reality Check","Show repayment cost, due dates, and monthly pressure.","Before every BNPL confirmation.","Show true installment cost","reflection"],["High-Risk Spending Limit","Set caps for excitement-driven spending.","Hard warning at 90%.","Set risk limit","settings"]], settings:[["Overdraft protection","Warn before low-balance payment."],["BNPL reality check","Show repayment pressure."],["High-risk limit","Cap risky categories."]], reflection:{low:"This may be fine, but future pressure should be visible before the thrill takes over.", medium:"This has enough pressure that the fun may fade once repayments show up.", high:"This is a high-risk checkout moment. Slow it down before it becomes future debt.", actions:{low:["Pay in full if possible","Check total cost"], medium:["Avoid BNPL","Set a hard cap"], high:["Do not use installments","Save first"]}}},
+      OOPS:{code:"OOPS", name:"The Impulse Buyer", insight:"You enjoy the feeling of finding something you want right now. Your setup keeps the joy while reducing regret later.", summary:"Your recommendations focus on regret prediction, wishlist delays, emotional checks, and free-spend visibility.", tag:"Regret-safe mode", accent:"#f08a5d", quote:"Set a 24-hour pause rule before touching your savings.", autoTip:"Use auto-save plus a 24-hour delay before moving money out of savings.", features:[["Regret Check","Show tomorrow’s feeling before today’s checkout.","Show above HKD 400.","Turn on regret check","reflection"],["Wishlist Delay","Move tempting purchases into a 24-hour wishlist.","24-hour delay.","Use wishlist delay","reflection"],["Friendly Budget Guardian","Show weekly free-spend money in a warm way.","Visible during checkout.","Show free-spend balance","savings"]], settings:[["Regret check","Show reminder before checkout."],["Wishlist delay","Hold tempting purchases for 24 hours."],["Friendly budget","Show weekly free-spend balance."]], reflection:{low:"This looks manageable, but a small pause can protect you from tomorrow's regret.", medium:"This is a classic maybe-regret moment: exciting now, less charming after the budget hit.", high:"This has strong regret potential. It deserves a cooling-off period before checkout.", actions:{low:["Save to wishlist","Check again tonight"], medium:["Use 24-hour delay","Buy a lower-cost version"], high:["Do not checkout now","Turn it into a goal"]}}}
+    };
+
+    const scenarios = [
+      { label:"Buy headphones for HKD 899", item:"Limited-edition wireless headphones", price:899, method:"full", budget:8000, installments:0 },
+      { label:"Use BNPL for a HKD 3,200 phone", item:"New flagship phone", price:3200, method:"bnpl3", budget:8000, installments:900 },
+      { label:"Book a last-minute HKD 1,200 trip", item:"Last-minute weekend trip", price:1200, method:"full", budget:7000, installments:300 },
+      { label:"Late-night HKD 480 shopping basket", item:"Late-night shopping basket", price:480, method:"full", budget:5200, installments:0 }
+    ];
+
+    let currentType = localStorage.getItem("spendType") || "OOPS";
+    let selectedGoal = "Emergency fund";
+    let savedAmount = Number(localStorage.getItem("spendTypeSavingsProgress")) || 0;
+    let hasRunReflection = false;
+
+    const $ = (id) => document.getElementById(id);
+    const money = (n) => "HKD " + Math.round(Math.max(0, Number.isFinite(n) ? n : 0)).toLocaleString("en-HK");
+    const pct = (n) => Math.round(n * 1000) / 10 + "%";
+    const clamp = (v,min,max) => Math.max(min, Math.min(max, v));
+
+    function setAccent(hex){
+      document.documentElement.style.setProperty("--accent", hex);
+      const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+      document.documentElement.style.setProperty("--accent-soft", `rgb(${Math.round(r*.12+255*.88)},${Math.round(g*.12+255*.88)},${Math.round(b*.12+255*.88)})`);
+    }
+
+    function renderSwitcher(){
+      const box=$("typeSwitcher"); box.innerHTML="";
+      Object.values(spendTypeConfig).forEach(c=>{
+        const btn=document.createElement("button"); btn.type="button"; btn.textContent=`${c.code} | ${c.name}`;
+        btn.className=c.code===currentType?"active":"";
+        btn.onclick=()=>{ currentType=c.code; localStorage.setItem("spendType",currentType); renderAll(); };
+        box.appendChild(btn);
+      });
+    }
+
+    function renderBanking(){
+      const c=spendTypeConfig[currentType]; setAccent(c.accent);
+      $("profileTitle").innerHTML=`${c.code} <span>${c.name}</span>`;
+      $("profileInsight").textContent=c.insight;
+      $("profileSummary").textContent=c.summary;
+      $("profileTag").textContent=c.tag;
+      $("personaTag").textContent=`${c.code} | ${c.name}`;
+      $("featureGrid").innerHTML="";
+      c.features.forEach(([title, what, trigger, cta, target])=>{
+        const card=document.createElement("article"); card.className="card";
+        card.innerHTML=`<h3>${title}</h3><p>${what}</p><div class="mini-list"><span><strong>Default trigger:</strong> ${trigger}</span></div><button class="small-cta" type="button">${cta}</button>`;
+        card.querySelector("button").onclick=()=>scrollToModule(target);
+        $("featureGrid").appendChild(card);
+      });
+      $("settingsGrid").innerHTML="";
+      const saved=JSON.parse(localStorage.getItem("spendTypeSettings")||"{}");
+      c.settings.forEach(([label, help])=>{
+        const on=saved[currentType]?.[label] ?? true;
+        const item=document.createElement("div"); item.className="setting";
+        item.innerHTML=`<div><h3>${label}</h3><p>${help}</p></div><button class="toggle ${on?"on":""}" type="button" aria-label="Toggle ${label}" data-setting="${label}"></button>`;
+        $("settingsGrid").appendChild(item);
+      });
+      $("savingsQuote").textContent=`${c.code} | ${c.name}: ${c.quote}`;
+      $("personalityAutoTip").textContent=c.autoTip;
+    }
+
+    function scrollToModule(target){
+      const id = target==="savings" ? "savingsModule" : target==="settings" ? "bankingModule" : "reflectionModule";
+      const el=$(id); el.scrollIntoView({behavior:"smooth", block:"start"}); el.classList.add("highlight"); setTimeout(()=>el.classList.remove("highlight"),900);
+    }
+
+    function getInstallmentMonths(method){ return method==="bnpl3"?3:method==="bnpl6"?6:0; }
+    function levelByRatio(ratio, low, high){ if(!Number.isFinite(ratio)) return "high"; if(ratio<low) return "low"; if(ratio<=high) return "medium"; return "high"; }
+
+    function matrixResult(type, impactLevel, futureLevel){
+      if(impactLevel==="high") return "Slow Down";
+      if(impactLevel==="low" && futureLevel==="low") return ["CTRL","ALFA","HOLD","SAFE"].includes(type) ? "Looks Fine" : "Pause and Think";
+      if(impactLevel==="medium" && futureLevel==="low") return ["BLAZE","YOLO","OOPS"].includes(type) ? "Slow Down" : "Pause and Think";
+      if(impactLevel==="medium" && ["medium","high"].includes(futureLevel)) return type==="HOLD" ? "Pause and Think" : "Slow Down";
+      if(futureLevel==="high") return "Slow Down";
+      return "Pause and Think";
+    }
+
+    function getReflectionNumbers(){
+      const price=Number($("itemPrice").value), budget=Number($("monthlyBudget").value), existing=Number($("existingInstallments").value)||0, method=$("paymentMethod").value;
+      if(!price || !budget) return null;
+      const months=getInstallmentMonths(method);
+      const monthlyInstallment=months?price/months:0;
+      const impactAmount=months?monthlyInstallment:price;
+      const impactRatio=impactAmount/budget;
+      const futureRatio=months?(existing+monthlyInstallment)/budget:0;
+      const impactLevel=levelByRatio(impactRatio,0.2,0.4);
+      const futureLevel=months?levelByRatio(futureRatio,0.15,0.3):"low";
+      return {price,budget,existing,months,monthlyInstallment,impactAmount,impactRatio,futureRatio,impactLevel,futureLevel,remaining:budget-impactAmount};
+    }
+
+    function renderReflection(){
+      const c=spendTypeConfig[currentType];
+      const r=getReflectionNumbers();
+      if(!r || !hasRunReflection){
+        ["impactValue","monthValue","futureValue","leftValue"].forEach(id=>{ $(id).textContent="—"; $(id).classList.add("placeholder"); });
+        $("verdictPill").textContent="Ready to reflect"; $("verdictPill").className="result-pill warn";
+        $("impactSub").textContent="How much of this month it takes up."; $("monthSub").textContent="How this month is likely to feel."; $("futureSub").textContent="Future installment pressure."; $("leftSub").textContent="Flexible budget after this impact.";
+        $("impactHook").textContent="Run the reflection to see the purchase impact."; $("personalityExplain").textContent="Different personalities need different reminders before spending."; $("futureExplain").textContent="Installments can look harmless now and annoying later."; $("actionExplain").textContent="Run the reflection to get a practical next step."; $("altChips").innerHTML="";
+        return;
+      }
+      const result=matrixResult(currentType,r.impactLevel,r.futureLevel);
+      const actionKey=result==="Looks Fine"?"low":result==="Pause and Think"?"medium":"high";
+      $("verdictPill").textContent=result; $("verdictPill").className="result-pill "+(result==="Slow Down"?"danger":result==="Pause and Think"?"warn":"");
+      ["impactValue","monthValue","futureValue","leftValue"].forEach(id=>$(id).classList.remove("placeholder"));
+      const impactText=r.impactLevel==="low"?"Low impact":r.impactLevel==="medium"?"Medium impact":"High impact";
+      $("impactValue").textContent=pct(r.impactRatio);
+      $("monthValue").textContent=r.impactLevel==="low"?"Light":r.impactLevel==="medium"?"Noticeable":"Heavy";
+      $("futureValue").textContent=r.futureLevel==="low"?"Low":r.futureLevel==="medium"?"Moderate":"Heavy";
+      $("leftValue").textContent=money(r.remaining);
+      $("impactSub").textContent=`${impactText}: this uses ${money(r.impactAmount)} of your flexible budget.`;
+      $("monthSub").textContent=r.remaining>=0?`${money(r.remaining)} remains after this purchase impact.`:`This goes ${money(Math.abs(r.remaining))} beyond this month's flexible budget.`;
+      $("futureSub").textContent=r.months?`${money(r.monthlyInstallment)} per month for ${r.months} months.`:"No new BNPL schedule from this payment method.";
+      $("leftSub").textContent="Room left after current purchase impact.";
+      $("impactHook").textContent=`${impactText}. The budget impact is ${pct(r.impactRatio)}.`;
+      $("personalityExplain").textContent=c.reflection[actionKey];
+      $("futureExplain").textContent=r.months?`BNPL raises future pressure to ${pct(r.futureRatio)} of flexible budget.`:"Paying without BNPL keeps future repayment pressure lower.";
+      $("actionExplain").textContent=result==="Looks Fine"?"This can proceed with a light check.":result==="Pause and Think"?"This deserves a pause before buying.":"This should slow down before checkout.";
+      $("altChips").innerHTML=""; c.reflection.actions[actionKey].forEach(t=>{const chip=document.createElement("span"); chip.className="chip"; chip.textContent=t; $("altChips").appendChild(chip);});
+    }
+
+    function renderScenarios(){
+      const box=$("scenarioGrid"); box.innerHTML="";
+      scenarios.forEach(s=>{ const b=document.createElement("button"); b.type="button"; b.textContent=s.label; b.onclick=()=>{ $("itemName").value=s.item; $("itemPrice").value=s.price; $("paymentMethod").value=s.method; $("monthlyBudget").value=s.budget; $("existingInstallments").value=s.installments; hasRunReflection=true; renderReflection(); }; box.appendChild(b); });
+    }
+
+    function getGoalName(){ return selectedGoal==="Custom" ? ($("customGoalInput").value.trim() || "Custom goal") : selectedGoal; }
+    function getMonths(){ return $("timeframeSelect").value==="custom" ? Math.max(1, Number($("customMonths").value)||1) : Number($("timeframeSelect").value); }
+
+    function renderSavings(){
+      const target=Number($("targetAmount").value), income=Number($("monthlyIncome").value), months=getMonths();
+      if(!target){
+        $("savingRate").textContent="Need to save: —"; $("weeklyText").textContent="Weekly amount will appear here."; $("ruleSavingsPart").textContent="—"; $("affordabilityNote").textContent="Enter a target and income to check comfort zone."; $("difficultyBadge").textContent="Goal preview"; return;
+      }
+      const monthlyNeed=target/months, weeklyNeed=monthlyNeed/4.345, comfort=income?income/3:0, percent=clamp(savedAmount/target*100,0,100);
+      $("savingRate").textContent=`Need to save: ${money(monthlyNeed)} / month`;
+      $("weeklyText").textContent=`About ${money(weeklyNeed)} / week for "${getGoalName()}".`;
+      const end=new Date(); end.setMonth(end.getMonth()+months); $("endDateHint").textContent=`Target end: ${end.toLocaleDateString("en-HK",{year:"numeric",month:"short",day:"numeric"})}`;
+      $("progressFill").style.width=percent+"%"; $("progressPercent").textContent=`${Math.round(percent)}% completed (${money(savedAmount)} saved toward ${money(target)})`;
+      $("ruleSavingsPart").textContent=income?money(comfort):"—";
+      if(income && monthlyNeed<=comfort){ $("affordabilityNote").textContent=`Within your 333 comfort zone: ${money(monthlyNeed)} is below one-third income (${money(comfort)}).`; $("difficultyBadge").textContent="Comfortable plan"; }
+      else if(income){ $("affordabilityNote").textContent="Above the 333 comfort zone: consider a longer timeframe or smaller target."; $("difficultyBadge").textContent="Stretch plan"; }
+      $("badgeContainer").querySelectorAll(".badge").forEach(b=>{ const m=Number(b.dataset.milestone); b.classList.toggle("unlocked", m===0?savedAmount>0:percent>=m); });
+    }
+
+    function bindEvents(){
+      document.addEventListener("click",e=>{ const t=e.target.closest(".toggle"); if(t) t.classList.toggle("on"); });
+      $("saveSettings").onclick=()=>{ const all=JSON.parse(localStorage.getItem("spendTypeSettings")||"{}"); all[currentType]={}; document.querySelectorAll("#settingsGrid .toggle").forEach(t=>all[currentType][t.dataset.setting]=t.classList.contains("on")); localStorage.setItem("spendTypeSettings",JSON.stringify(all)); $("saveState").textContent="Your personalized banking setup has been saved."; };
+      $("viewReport").onclick=()=>$("saveState").textContent=`Demo report opened for ${currentType} | ${spendTypeConfig[currentType].name}.`;
+      $("runReflection").onclick=()=>{ hasRunReflection=true; renderReflection(); };
+      $("resetReflection").onclick=()=>{ ["itemName","itemPrice","monthlyBudget","existingInstallments"].forEach(id=>$(id).value=""); $("paymentMethod").value="full"; hasRunReflection=false; renderReflection(); };
+      ["itemName","itemPrice","paymentMethod","monthlyBudget","existingInstallments"].forEach(id=>{ $(id).addEventListener("input",()=>{ if(hasRunReflection) renderReflection(); }); $(id).addEventListener("change",()=>{ if(hasRunReflection) renderReflection(); }); });
+      $("goalChips").onclick=(e)=>{ const chip=e.target.closest("[data-goal]"); if(!chip) return; selectedGoal=chip.dataset.goal; $("goalChips").querySelectorAll(".chip").forEach(c=>c.classList.toggle("active",c.dataset.goal===selectedGoal)); $("customGoalWrap").classList.toggle("visible",selectedGoal==="Custom"); renderSavings(); };
+      document.querySelectorAll("[data-target-add]").forEach(b=>b.onclick=()=>{ $("targetAmount").value=(Number($("targetAmount").value)||0)+Number(b.dataset.targetAdd); renderSavings(); });
+      ["customGoalInput","targetAmount","timeframeSelect","customMonths","monthlyIncome"].forEach(id=>{ $(id).addEventListener("input",renderSavings); $(id).addEventListener("change",renderSavings); });
+      document.querySelectorAll("[data-save-add]").forEach(b=>b.onclick=()=>addSavings(Number(b.dataset.saveAdd)));
+      $("addCustomSave").onclick=()=>{ addSavings(Number($("customSaveAmount").value)||0); $("customSaveAmount").value=""; };
+      $("setGoalBtn").onclick=()=>{ localStorage.setItem("spendTypeSavingsGoal", JSON.stringify({type:currentType,name:getGoalName(),targetAmount:Number($("targetAmount").value)||0,timeframeMonths:getMonths(),monthlyIncome:Number($("monthlyIncome").value)||0})); localStorage.setItem("spendTypeSavingsProgress",String(savedAmount)); $("goalState").textContent=`Saved "${getGoalName()}".`; };
+      $("remindBtn").onclick=()=>$("goalState").textContent="Reminder simulated: check this goal again next week.";
+    }
+
+    function addSavings(amount){ const target=Math.max(1,Number($("targetAmount").value)||1); savedAmount=clamp(savedAmount+amount,0,target); localStorage.setItem("spendTypeSavingsProgress",String(savedAmount)); renderSavings(); }
+    function renderAll(){ renderSwitcher(); renderBanking(); renderReflection(); renderSavings(); }
+    renderScenarios(); bindEvents(); renderAll();
+  </script>
+</body>
+</html>
