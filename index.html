@@ -378,19 +378,48 @@
     /* ===== End dashboard style override ===== */
 
   
-    .insight-box{
-      margin-top:16px;
-      max-width:680px;
-      padding:14px 16px;
-      border-radius:18px;
+    .insight-grid{
+      margin-top:20px;
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+      width:100%;
+      max-width:100%;
+    }
+    .insight-card{
+      min-height:150px;
+      padding:18px 20px;
+      border-radius:22px;
       border:1px solid var(--line);
-      background:rgba(255,255,255,0.72);
+      background:rgba(255,255,255,0.82);
+      box-shadow:0 8px 24px rgba(31,52,78,0.045);
       color:#405267;
       line-height:1.65;
       font-size:15px;
     }
-    .insight-box strong{
+    .insight-card h3{
+      margin:0 0 8px;
       color:var(--text);
+      font-size:18px;
+      letter-spacing:-0.01em;
+    }
+    .signal-tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+    }
+    .signal-tags span{
+      display:inline-block;
+      padding:7px 11px;
+      border-radius:999px;
+      background:var(--primary-soft);
+      color:var(--primary);
+      font-weight:750;
+      font-size:13px;
+    }
+    @media (max-width:860px){
+      .insight-grid{grid-template-columns:1fr;}
     }
 
   </style>
@@ -470,7 +499,7 @@
               <div id="resultName" class="result-title"></div>
               <div id="resultSubtitle" class="subtitle"></div>
               <p id="resultSummary" style="font-size:18px; color:#4f5b4f; max-width:620px;"></p>
-              <div id="resultInsight" class="insight-box"></div>
+              <div id="resultInsight" class="insight-grid"></div>
             </div>
             <div class="animal-wrap">
               <img id="resultAnimal" class="hero-animal" src="" alt="SpendType animal character">
@@ -562,14 +591,70 @@
 
 
     const personaInsights = {
-      CTRL: "<strong>Behavioural signal:</strong> strong planning, high price sensitivity, and disciplined budget control. This suggests low impulsive spending, high savings orientation, and strong ability to track financial decisions.",
-      ALFA: "<strong>Behavioural signal:</strong> strategic comparison and value-based decision-making. You tend to balance incentives with control, which supports adaptive but rational financial choices.",
-      HOLD: "<strong>Behavioural signal:</strong> calm but relatively low-maintenance money management. This may create delayed decisions or inconsistent tracking, so simple budgeting prompts can be useful.",
-      SWNG: "<strong>Behavioural signal:</strong> opportunity-seeking and situational flexibility. Your spending may shift with context, creating occasional impulsive actions and fluctuating budget control.",
-      SAFE: "<strong>Behavioural signal:</strong> security-first thinking and strong savings orientation. This supports responsible choices, but may also increase financial anxiety when spending feels uncertain.",
-      BLAZE: "<strong>Behavioural signal:</strong> decisive action and confidence-driven consumption. This can create higher spending intensity, making cooling-off prompts and budget boundaries useful.",
-      YOLO: "<strong>Behavioural signal:</strong> emotion-driven consumption and strong response to immediate rewards. This suggests higher impulsive spending risk and lower budget adherence under pressure.",
-      OOPS: "<strong>Behavioural signal:</strong> reactive and situational spending. You may experience unplanned purchases or difficulty tracking small commitments, making regret checks and spending reminders valuable."
+      CTRL: {
+        decision: "You tend to plan before spending and prefer clear limits. Large purchases are usually checked against goals, budgets, or long-term value before you commit.",
+        triggers: "Discounts, price comparisons, cashback, and anything framed as saving money may still attract your attention, especially when the deal feels measurable.",
+        strengths: "Your strongest advantage is budget discipline. You are less likely to be driven by sudden emotion and more likely to preserve savings over time.",
+        watchout: "Strict control can sometimes turn into over-restriction. You may reject affordable purchases even when they support wellbeing or long-term goals.",
+        time: "Future-oriented. You usually think about later consequences, opportunity cost, and whether the purchase will still feel reasonable after the moment passes.",
+        signals: ["High budget control", "High price sensitivity", "Strong savings orientation", "Low impulsive spending", "Goal-protection friendly"]
+      },
+      ALFA: {
+        decision: "You make spending decisions strategically. You compare value, timing, benefits, and alternatives, aiming to make the purchase feel rational rather than random.",
+        triggers: "Limited-time value, premium quality, reward points, and optimization opportunities can influence you when the purchase appears strategically justified.",
+        strengths: "You are good at turning information into action. You can balance opportunity and control, which makes you suitable for personalized comparison tools.",
+        watchout: "Because your reasoning is strong, you may sometimes over-justify a purchase after you already want it. Confidence can hide emotional preference.",
+        time: "Balanced time view. You consider both current utility and future value, especially when a decision can be framed as an investment or upgrade.",
+        signals: ["Strategic comparison", "Value sensitivity", "Moderate risk appetite", "Controlled decision-making", "Optimization-friendly"]
+      },
+      HOLD: {
+        decision: "You prefer simple and low-pressure money choices. You may not overspend dramatically, but you may also avoid detailed tracking or delay decisions.",
+        triggers: "Convenience, low-effort options, default renewals, and set-and-forget services are more influential than dramatic sales pressure.",
+        strengths: "You are not easily pulled into high-pressure spending. Your calm approach helps you avoid many impulsive or hype-driven decisions.",
+        watchout: "Low maintenance can become low visibility. Small payments, subscriptions, or scattered transactions may build up without being noticed.",
+        time: "Present-stable. You focus on keeping life smooth now, while long-term planning may need simple automatic systems rather than frequent manual checks.",
+        signals: ["Low financial noise tolerance", "Simple-budget friendly", "Delayed tracking", "Subscription risk", "Automation-friendly"]
+      },
+      SWNG: {
+        decision: "You respond strongly to changing opportunities and contextual cues. A purchase may feel attractive when it appears timely, rare, or linked to potential gain.",
+        triggers: "Flash deals, new products, market-like opportunities, exclusive access, and social proof can shift your willingness to spend quickly.",
+        strengths: "You notice opportunities early and are open to trying new options. This makes you responsive to useful tools and adaptive financial feedback.",
+        watchout: "Flexibility can become inconsistency. Your spending pattern may swing between restraint and sudden action depending on the situation.",
+        time: "Opportunity-focused. You often evaluate the moment in front of you, so the system should add short checklists before quick decisions.",
+        signals: ["Opportunity seeking", "Situational spending", "Variable control", "Deal responsiveness", "Checklist-friendly"]
+      },
+      SAFE: {
+        decision: "You make decisions through a security-first lens. Spending feels easier when you know your emergency buffer, savings plan, and essential costs remain protected.",
+        triggers: "Uncertain balances, future bills, unexpected costs, and anything that threatens your safety cushion can strongly affect your comfort with spending.",
+        strengths: "You are naturally oriented toward saving, caution, and financial responsibility. You are likely to benefit from protected wallets and comfort limits.",
+        watchout: "High caution may increase financial anxiety. You might avoid reasonable spending even when your budget can safely support it.",
+        time: "Future-protective. You think about possible risks ahead, so reassurance, buffer visibility, and safe-to-spend amounts are especially useful.",
+        signals: ["High savings orientation", "Low risk tolerance", "Security seeking", "Buffer protection", "Anxiety-sensitive"]
+      },
+      BLAZE: {
+        decision: "You decide quickly and with confidence. Once a purchase feels aligned with your motivation, you may move fast before fully checking the budget impact.",
+        triggers: "Strong emotions, achievement rewards, urgency, status upgrades, and motivational framing can increase your spending intensity.",
+        strengths: "You are action-oriented and unlikely to stay stuck. This can help you pursue goals quickly when guardrails are clear.",
+        watchout: "Speed can reduce reflection. Without a cooling-off moment, a confident purchase may become a future budget pressure.",
+        time: "Momentum-driven. You focus on immediate action and results, so short pauses and weekly spending bars can improve control.",
+        signals: ["Fast decision speed", "High spending intensity", "Confidence-driven choice", "Cooling-off needed", "Boundary-friendly"]
+      },
+      YOLO: {
+        decision: "You are highly responsive to immediate rewards and emotional excitement. Purchases may feel justified when they promise experience, status, or fun right now.",
+        triggers: "Countdowns, scarcity, social proof, last-chance offers, and buy-now-pay-later framing can strongly increase your willingness to spend.",
+        strengths: "You are open, energetic, and willing to enjoy life. This makes the product experience engaging when spending is kept within safe limits.",
+        watchout: "Immediate reward can hide future pressure. Installments, small repeated payments, or low-balance warnings should be made very visible.",
+        time: "Here-and-now focused. Future repayment or regret may feel distant until after the purchase is complete.",
+        signals: ["High impulse risk", "Reward sensitivity", "BNPL pressure risk", "Lower budget adherence", "Strong pause needed"]
+      },
+      OOPS: {
+        decision: "You may handle spending one payment at a time without checking the full picture often. Small payments and everyday purchases can be easy to miss.",
+        triggers: "Small daily payments, automatic renewals, convenience purchases, unclear balances, and payments spread across different apps or cards.",
+        strengths: "You are flexible and not overly restricted by rules. You can make decisions based on current needs without overthinking every payment.",
+        watchout: "Because you may not check the overall picture often, spending can add up without being noticed.",
+        time: "Here-and-now focused. Individual payments are clear, but the full pattern may be harder to see.",
+        signals: ["Low tracking frequency", "Lower account visibility", "Small-payment buildup", "Auto-payment forgetfulness", "Reminder-friendly"]
+      }
     };
 
     let current = 0;
@@ -669,7 +754,34 @@
       document.getElementById('resultName').textContent = profile.name;
       document.getElementById('resultSubtitle').textContent = `${profile.code} · ${profile.title}`;
       document.getElementById('resultSummary').textContent = profile.summary;
-      document.getElementById('resultInsight').innerHTML = personaInsights[profile.code] + " These signals are used in the following simulation modules to provide more personalized and responsible financial feedback.";
+      const insight = personaInsights[profile.code];
+      document.getElementById('resultInsight').innerHTML = `
+        <div class="insight-card">
+          <h3>Decision Style</h3>
+          <p>${insight.decision}</p>
+        </div>
+        <div class="insight-card">
+          <h3>Common Triggers</h3>
+          <p>${insight.triggers}</p>
+        </div>
+        <div class="insight-card">
+          <h3>Strengths</h3>
+          <p>${insight.strengths}</p>
+        </div>
+        <div class="insight-card">
+          <h3>Possible Watch-Out</h3>
+          <p>${insight.watchout}</p>
+        </div>
+        <div class="insight-card">
+          <h3>Time View</h3>
+          <p>${insight.time}</p>
+        </div>
+        <div class="insight-card">
+          <h3>Behaviour Signals</h3>
+          <p>These signals are used in the following simulation modules to provide more personalized and responsible financial feedback.</p>
+          <div class="signal-tags">${insight.signals.map(s => `<span>${s}</span>`).join("")}</div>
+        </div>
+      `;
       localStorage.setItem("spendType", profile.code);
       document.getElementById('resultAnimal').src = animalImages[profile.code] || "";
       document.getElementById('resultAnimal').alt = profile.name + " animal character";
