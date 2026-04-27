@@ -377,6 +377,22 @@
     }
     /* ===== End dashboard style override ===== */
 
+  
+    .insight-box{
+      margin-top:16px;
+      max-width:680px;
+      padding:14px 16px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,0.72);
+      color:#405267;
+      line-height:1.65;
+      font-size:15px;
+    }
+    .insight-box strong{
+      color:var(--text);
+    }
+
   </style>
 </head>
 <body>
@@ -454,6 +470,7 @@
               <div id="resultName" class="result-title"></div>
               <div id="resultSubtitle" class="subtitle"></div>
               <p id="resultSummary" style="font-size:18px; color:#4f5b4f; max-width:620px;"></p>
+              <div id="resultInsight" class="insight-box"></div>
             </div>
             <div class="animal-wrap">
               <img id="resultAnimal" class="hero-animal" src="" alt="SpendType animal character">
@@ -541,6 +558,18 @@
       "L-H-H": { code: "BLAZE", name: "冲锋鸡", title: "The Conviction Player", summary: "You can be organized and ambitious, but when you believe in something, emotion and conviction can carry real weight in your decisions.", strengths: ["High energy", "Prepared to commit", "Strong action bias"], blindspots: ["May confuse conviction with accuracy", "Can take oversized bets"], tips: ["Stress-test your assumptions", "Use pre-set exposure caps"] },
       "L-L-H": { code: "YOLO", name: "梭哈猴", title: "The Adrenaline Chaser", summary: "You are driven by possibility, speed, and excitement. You are willing to move before everyone else—but you can also act before you have fully thought things through.", strengths: ["Bold", "Fast-moving", "Open to experimentation"], blindspots: ["FOMO risk", "Impulsive entries", "Higher regret potential"], tips: ["Add a 24-hour pause for large decisions", "Use loss previews before committing"] },
       "L-L-L": { code: "OOPS", name: "买它鸭", title: "The Mood Buyer", summary: "You are not necessarily a risk lover, but emotions, context, and momentary desire can have a strong influence on your money choices.", strengths: ["Emotionally expressive", "Values lived experience", "Responsive to joy"], blindspots: ["Impulse spending", "Budget drift", "Post-purchase regret"], tips: ["Tag emotional purchases", "Try delayed checkout and weekly reflection"] }
+    };
+
+
+    const personaInsights = {
+      CTRL: "<strong>Behavioural signal:</strong> strong planning, high price sensitivity, and disciplined budget control. This suggests low impulsive spending, high savings orientation, and strong ability to track financial decisions.",
+      ALFA: "<strong>Behavioural signal:</strong> strategic comparison and value-based decision-making. You tend to balance incentives with control, which supports adaptive but rational financial choices.",
+      HOLD: "<strong>Behavioural signal:</strong> calm but relatively low-maintenance money management. This may create delayed decisions or inconsistent tracking, so simple budgeting prompts can be useful.",
+      SWNG: "<strong>Behavioural signal:</strong> opportunity-seeking and situational flexibility. Your spending may shift with context, creating occasional impulsive actions and fluctuating budget control.",
+      SAFE: "<strong>Behavioural signal:</strong> security-first thinking and strong savings orientation. This supports responsible choices, but may also increase financial anxiety when spending feels uncertain.",
+      BLAZE: "<strong>Behavioural signal:</strong> decisive action and confidence-driven consumption. This can create higher spending intensity, making cooling-off prompts and budget boundaries useful.",
+      YOLO: "<strong>Behavioural signal:</strong> emotion-driven consumption and strong response to immediate rewards. This suggests higher impulsive spending risk and lower budget adherence under pressure.",
+      OOPS: "<strong>Behavioural signal:</strong> reactive and situational spending. You may experience unplanned purchases or difficulty tracking small commitments, making regret checks and spending reminders valuable."
     };
 
     let current = 0;
@@ -640,6 +669,7 @@
       document.getElementById('resultName').textContent = profile.name;
       document.getElementById('resultSubtitle').textContent = `${profile.code} · ${profile.title}`;
       document.getElementById('resultSummary').textContent = profile.summary;
+      document.getElementById('resultInsight').innerHTML = personaInsights[profile.code] + " These signals are used in the following simulation modules to provide more personalized and responsible financial feedback.";
       localStorage.setItem("spendType", profile.code);
       document.getElementById('resultAnimal').src = animalImages[profile.code] || "";
       document.getElementById('resultAnimal').alt = profile.name + " animal character";
